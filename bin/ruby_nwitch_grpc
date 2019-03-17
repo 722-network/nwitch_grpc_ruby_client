@@ -2,23 +2,55 @@
 
 require 'nwitch_grpc_client'
 
-unless ARGV[3]
+def success!
+  puts 'sent'
+end
+
+def failure!
+  puts 'failed'
+  exit 1
+end
+
+# This is used in local testing only.
+# This token is invalid for production.
+def push
   NWitchGRPCClient.configure do |config|
     config.nwitch_token = 'ff8a0d3af823f27d2ce36ed8-b9ac52cdff'
     config.grpc_host = 'localhost:50051'
   end
 
   if NWitchGRPCClient::Notification.push(ARGV[0], ARGV[1], ARGV[2])
-    puts 'sent'
+    success!
   else
-    puts 'failed'
-    exit 1
+    failure!
   end
-else
+end
+
+def push_with_token
   if NWitchGRPCClient::Notification.push_with_token(ARGV[0], ARGV[1], ARGV[2], ARGV[3])
-    puts 'sent'
+    success!
   else
-    puts 'failed'
+    failure!
+  end
+end
+
+def check
+  return false unless ARGV[0] == 'HealthCheck'
+
+  status = NWitchGRPCClient::Check.check
+  puts status
+
+  if status == 'SERVING'
+    exit 0
+  else
     exit 1
   end
+end
+
+check
+
+unless ARGV[3]
+  push
+else
+  push_with_token
 end

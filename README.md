@@ -60,6 +60,16 @@ NWitchGRPCClient::Notification.push_with_token(topic, title, msg, token)
 
 Notice that it will only return `true` or `false` to represent the success of pushing it to the server. No further information is given back. For a more complete output use our JSON Rest API.
 
+### Perform health check
+
+Health checks allows you to check if the gRPC service is online. To do so, just:
+```ruby
+require 'nwitch_grpc_client'
+
+NWitchGRPCClient::Check.check
+# => "SERVING"
+```
+
 ### The `ruby_nwitch_grpc` executable
 
 After installing this Gem, you will find the `ruby_nwitch_grpc` program as part of your executables. You can use it to push notifications from the shell.

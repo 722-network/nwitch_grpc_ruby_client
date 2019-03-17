@@ -17,8 +17,11 @@ Gem::Specification.new do |spec|
   spec.files = [
     'lib/nwitch_grpc_client.rb',
     'lib/nwitch_grpc_client/configuration.rb',
+    'lib/nwitch_grpc_client/check.rb',
     'lib/nwitch_grpc_client/notification.rb',
     'lib/nwitch_grpc_client/version.rb',
+    'lib/nwitch_grpc_client/protobuf/check_pb.rb',
+    'lib/nwitch_grpc_client/protobuf/check_services_pb.rb',
     'lib/nwitch_grpc_client/protobuf/push_pb.rb',
     'lib/nwitch_grpc_client/protobuf/push_services_pb.rb'
   ]

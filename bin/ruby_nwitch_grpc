@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'nwitch_grpc_client'
+
+unless ARGV[3]
+  NWitchGRPCClient.configure do |config|
+    config.nwitch_token = 'ff8a0d3af823f27d2ce36ed8-b9ac52cdff'
+    config.grpc_host = 'localhost:50051'
+  end
+
+  if NWitchGRPCClient::Notification.push(ARGV[0], ARGV[1], ARGV[2])
+    puts 'sent'
+  else
+    puts 'failed'
+    exit 1
+  end
+else
+  if NWitchGRPCClient::Notification.push_with_token(ARGV[0], ARGV[1], ARGV[2], ARGV[3])
+    puts 'sent'
+  else
+    puts 'failed'
+    exit 1
+  end
+end

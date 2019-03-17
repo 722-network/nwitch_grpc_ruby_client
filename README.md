@@ -1,43 +1,98 @@
-# NwitchGrpcClient
+# nwitch Ruby gRPC client
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/nwitch_grpc_client`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Requirements
 
-TODO: Delete this and the text above, and describe your gem
+- Ruby. (I'm using `v2.5.1`. But I guess any `>= 2.0` will work*)
 
-## Installation
+*Only tested with Ruby `v2.5.1`.*
 
-Add this line to your application's Gemfile:
+## Setup
 
-```ruby
-gem 'nwitch_grpc_client'
+Just:
+```
+$ gem install nwitch_grpc_client
 ```
 
-And then execute:
+Or with a *Gemfile*:
+```
+gem 'nwitch_grpc_client', '~> 0.1'
+```
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install nwitch_grpc_client
+Then:
+```
+$ bundle install
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Here's a quick example for pushing notifications:
+```ruby
+require 'nwitch_grpc_client'
 
-## Development
+# Configuration.
+# You can put this in a initializer like file.
+NWitchGRPCClient.configure do |config|
+  config.nwitch_token = 'YOUR_NWITCH_TOKEN'
+end
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+# Pushing notifications.
+topic = 'my_topic_name'
+title = 'Hello'
+msg = 'Hello world!'
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+NWitchGRPCClient::Notification.push(topic, title, msg)
+# => true
+```
 
-## Contributing
+Or you can pass the token directly, without configuration.
+```ruby
+require 'nwitch_grpc_client'
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/nwitch_grpc_client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+# Pushing notifications.
+token = 'YOUR_NWITCH_TOKEN'
+topic = 'my_topic_name'
+title = 'Hello'
+msg = 'Hello world!'
+
+NWitchGRPCClient::Notification.push_with_token(topic, title, msg, token)
+# => true
+```
+
+Notice that it will only return `true` or `false` to represent the success of pushing it to the server. No further information is given back. For a more complete output use our JSON Rest API.
+
+### The `ruby_nwitch_grpc` executable
+
+After installing this Gem, you will find the `ruby_nwitch_grpc` program as part of your executables. You can use it to push notifications from the shell.
+
+Mind that as the nwitch token will be used in your CLI, is a good idea to export it as a system environment variable.
+
+This is just a example:
+```
+$ export NWITCH_TOKEN=my_token_here
+
+$ ruby_nwitch_grpc my_topic_name "Hello" "Hello world!" $NWITCH_TOKEN
+```
+
+The order of arguments is the following:
+```
+$ ruby_nwitch_grpc topic_name title msg token
+```
+
+### Using the `ruby_nwitch_grpc` executable for health check
+
+This executable also includes a service health check feature:
+```
+$ ruby_nwitch_grpc HealthCheck
+SERVING
+```
+
+It will reply one of:
+- `SERVING`: gRPC service is up.
+- `UNKNOWN`: service status is unknown.
+- `NOT_SERVING`: gRPC service is down.
+
+The program exit code for a `SERVING` status is `0` (success), for `UNKNOWN` or `NOT_SERVING` it exites with status `1` (failure).
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the NwitchGrpcClient project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/nwitch_grpc_client/blob/master/CODE_OF_CONDUCT.md).
